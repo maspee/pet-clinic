@@ -21,16 +21,16 @@ jobs:
     - name: Validando tipo de proyecto
       id: tipoProyecto
       run: |
-        if [ -f "build.gradlew" ]
+        if [ -f "build.gradle" ]
         then
           echo "Proyecto Java"
-          if grep -q 'id "org.sonarqube" version "3.3"' build.gradlew
+          if grep -q 'id "org.sonarqube" version "3.3"' build.gradle
           then
-            echo "El plugin de SonarCloud ya esta presente en build.gradlew"
+            echo "El plugin de SonarCloud ya esta presente en build.gradle"
           else
-            sed -i '/id '\''java'\''/a \ \ \ \ id '\''org.sonarqube'\'' version '\''3.3\''' build.gradlew
-            echo "El plugin de SonarCloud no esta presente y se ha añadido en build.gradlew"
-            cat build.gradlew
+            sed -i '/id '\''java'\''/a \ \ \ \ id '\''org.sonarqube'\'' version '\''3.3\''' build.gradle
+            echo "El plugin de SonarCloud no esta presente y se ha añadido en build.gradle"
+            cat build.gradle
           fi
         else
           echo "Tipo de proyecto desconocido"
