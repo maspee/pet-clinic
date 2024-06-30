@@ -18,7 +18,20 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Build
+    - name: Validando tipo de proyecto
+      id: tipoProyecto
       run: |
-        chmod 777 gradlew
-        ./gradlew build
+        if [ -f "build.gradlew" ]
+        then
+          echo "Proyecto Java"
+          if grep -q 'id "org.sonarqube" version "3.3"' build.gradlew
+          then
+            echo "El plugin de SonarCloud ya esta presente en build.gradlew"
+          else
+            sed -i '/id '\''java'\''/a \ \ \ \ id '\''org.sonarqube'\'' version '\''3.3\''' build.gradlew
+            echo "El plugin de SonarCloud no esta presente y se ha añadido en build.gradlew"
+            cat build.gradlew
+          fi
+        else
+          echo "Tipo de proyecto desconocido"
+        fi
