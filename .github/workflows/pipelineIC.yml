@@ -18,35 +18,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Validando tipo de proyecto
-      id: tipoProyecto
+    - name: Build
       run: |
-        if [ -f "build.gradle" ]
-        then
-          echo "Proyecto Java"
-          if grep -q 'id "org.sonarqube" version "3.3"' build.gradle
-          then
-            echo "El plugin de SonarCloud ya esta presente en build.gradle"
-          else
-            sed -i '/id '\''java'\''/a \ \ \ \ id '\''org.sonarqube'\'' version '\''3.3\''' build.gradle
-            echo "El plugin de SonarCloud no esta presente y se ha añadido en build.gradle"
-            cat build.gradle
-          fi
-        else
-          echo "Tipo de proyecto desconocido"
-        fi
-
-    - name: Validando existencia de proyecto en SonarCloud
-      id: validateProjectOnSonar
-      run: |
-        set +e
-        curl -f -X POST -u '${{ secrets.SONAR_TOKKEN }}:' 'https://sonarcloud.io/api/projects/create' -d 'name=${{ github.event.repository.name }}' -d 'project=${{ github.event.repository.name }}' -d 'organization=maspee' -d 'visibility=public'
-        if [ $? -ne 0 ]
-        then
-          echo "Proyecto ya existe en SonarCloud"
-        else
-          echo "Proyecto ${{ github.event.repository.name }} fue creado exitosamente en SonarCloud"
-
-          echo "Se establece rama main como rama por defecto"
-          curl -X POST -u '${{ secrets.SONAR_TOKKEN }}:' 'https://sonarcloud.io/api/projects_branches/rename' -d 'name=main' -d 'project=${{ github.event.repository.name }}'
-        fi
+        chmod 777 gradlew
+        ./gradlew build
